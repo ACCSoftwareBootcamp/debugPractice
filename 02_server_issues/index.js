@@ -28,11 +28,9 @@ app.post("/bucket", (req, res) => {
   // build an object from user data
   let data = {
     id: newId++,
-    description: req.body.description ? req.body.description : "Ralph messed up!!!",
+    description: req.body.description ? req.body.description : "Tom messed up!!!",
     isComplete: false,
   };
-  // add data to fake data array
-  bucketArray.push(data);
   // send a receipt back to client
   res.json(data);
 });
