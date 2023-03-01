@@ -1,0 +1,75 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: cyan url("assets/ireland.jpeg") no-repeat fixed center;
+  background-size: cover;
+  font-family: "Roboto", sans-serif;
+}
+
+#container {
+  width: 400px;
+  margin: 10vh auto;
+  border: 2px solid black;
+  box-shadow: 3px 3px 10px black;
+  background-color: #86f5e582;
+}
+
+h1 {
+  background-color: #86f5e4;
+  color: black;
+  padding: 10px 20px;
+  text-transform: uppercase;
+  font-size: 36px;
+  font-weight: normal;
+  text-shadow: 2px 2px 1px cyan, 0 0 2px black;
+  text-align: center;
+  font-family: "Henny Penny", cursive;
+}
+
+.completed {
+  color: red;
+  text-decoration: line-through;
+}
+
+li {
+  line-height: 40px;
+  padding-left: 10px;
+  list-style: none;
+}
+
+li:nth-child(2n) {
+  background-color: #86f5e4b6;
+}
+
+input {
+  background-color: #f7f7f785;
+  width: 100%;
+  padding: 13px 13px 13px 20px;
+  color: #2980b9;
+  font-size: 18px;
+}
+
+input:focus {
+  background-color: white;
+  border: 3px solid cyan;
+  outline: none;
+}
+
+span {
+  background-color: darkred;
+  color: white;
+  height: 40px;
+  margin: 0 0 0 20px;
+  opacity: 0;
+  padding: 3px 15px;
+  float: right;
+  transition: .3s linear;
+}
+
+li:hover span {
+  opacity: 1;
+}
