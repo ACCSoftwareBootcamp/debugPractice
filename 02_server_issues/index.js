@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
-const logger = require("morgan");
-app.use(logger("dev"));
+// const logger = require("morgan");
+// app.use(logger("dev"));
 app.use(express.static("./client"))
 
 // this is our body-parser
@@ -13,8 +13,8 @@ app.use(express.urlencoded({extended: false}))
 const { bucketArray } = require("./fakeData");
 
 app.get("/", (req, res) => {
-  // res.send("Groot route");
-  res.send('index.html')
+  res.send("Groot route");
+  // res.sendFile('index.html')
 });
 
 // READ
@@ -31,6 +31,8 @@ app.post("/bucket", (req, res) => {
     description: req.body.description ? req.body.description : "Tom messed up!!!",
     isComplete: false,
   };
+  // update the store of items
+  bucketArray.push(data);
   // send a receipt back to client
   res.json(data);
 });
@@ -62,7 +64,7 @@ app.put('/bucket/:id', (req, res)=>{
   // if found, return the element => object
   // if not found, return undefined
   let item = bucketArray.find(bucketItem =>{
-    return requestedId = bucketItem.id
+    return requestedId == bucketItem.id
   })
   // test to make sure element is found
   if(item){
@@ -74,4 +76,6 @@ app.put('/bucket/:id', (req, res)=>{
   }
 })
 
-app.listen(port, () => console.log(`App listening on port ${port}`));
+// app.listen(port, () => console.log(`App listening on port ${port}`));
+
+module.exports = app;
