@@ -1,4 +1,4 @@
-// const baseUrl = "https://accbucketlistapiserver.herokuapp.com";
+// const baseUrl = "https://accbucketlists.herokuapp.com";
 const baseUrl = "http://localhost:3000";
 
 // READ
