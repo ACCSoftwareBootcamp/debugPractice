@@ -3,19 +3,21 @@ const app = express();
 const port = process.env.PORT || 3000;
 const logger = require("morgan");
 app.use(logger("dev"));
-app.use(express.static("./client"))
+// what is __dirname? try ..
+// console.log("__dirname is:", __dirname);
+app.use(express.static(__dirname+"/client"))
 
 // this is our body-parser
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 
 // allows access to fake data file
-const { bucketArray } = require("./fakeData");
+const { bucketArray } = require("./mockData");
 
-app.get("/", (req, res) => {
-  // res.send("Groot route");
-  res.send('index.html')
-});
+// app.get("/", (req, res) => {
+//   // res.send("Groot route");
+//   res.sendFile(__dirname+'/client/index.html')
+// });
 
 // READ
 app.get("/bucket", (req, res) => {

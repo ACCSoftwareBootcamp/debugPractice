@@ -49,8 +49,6 @@ $("ul").on("click", "li", function (e) {
 // DELETE
 $("ul").on("click", "span", function (event) {
   event.stopPropagation();
-  // console.log("I am the span")
-  // console.log(this);
   let itemId = $(this).parent().data("bucketid");
 
   let route = `bucket/${itemId}`;

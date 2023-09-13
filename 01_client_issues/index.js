@@ -17,9 +17,10 @@ app.use(express.urlencoded({ extended: false }));
 
 const mongoose = require('mongoose')
 
-const {DB, URI, DB_PASS, DB_USER} = process.env;
+// get the various connection settings from 
+// the environment variables from the .env file
 
-// console.log('process.env.DB_PASS is:', process.env.DB_PASS);
+const {DB, URI, DB_PASS, DB_USER} = process.env;
 
 let url = `${URI}/${DB}`
 
@@ -31,6 +32,16 @@ let connectionObject = {
   pass: DB_PASS
 };
 
+/* 
+   The mongoose.set('strictQuery', false); line is used to globally disable the 
+   "strict query" option in Mongoose. The "strict query" option, when enabled, 
+   ensures that only the fields defined in the schema are considered in a query. 
+   Any fields in the query that are not defined in the schema are ignored.
+
+   By setting strictQuery to false, Mongoose will not ignore fields in the query 
+   that are not defined in the schema. This means that even if a field is not 
+   defined in the schema, it can still be used in a query.
+*/
 mongoose.set('strictQuery', false);
 
 mongoose

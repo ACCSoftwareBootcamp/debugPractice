@@ -67,7 +67,6 @@ $("ul").on("click", "span", function (e) {
       throw Error("Cannot delete data at this time");
     })
     .then(function (data) {
-      console.log("Inside the promise: ", self);
       $(self).parent().remove();
     })
     .catch(function (err) {
@@ -77,7 +76,6 @@ $("ul").on("click", "span", function (e) {
 
 // Create
 $("input").keypress(function (event) {
-  console.log(this);
   if (event.which === 13 && $(this).val().trim()) {
     let route = "bucket";
     let endpoint = `${baseUrl}/${route}`;
