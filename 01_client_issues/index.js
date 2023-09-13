@@ -55,7 +55,8 @@ app.get("/", (req, res) => {
   res.sendFile('index.html', {root: __dirname + '/client'} );
 });
 
-// Blueprints
+// Blueprints (schema)
+// and Handles to the collection (model)
 const { BucketModel } = require("./models/BucketModel");
 
 // Queries
