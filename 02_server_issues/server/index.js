@@ -2,10 +2,13 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
 const logger = require("morgan");
+const path = require('path');
+
 app.use(logger("dev"));
+
 // what is __dirname? try ..
 // console.log("__dirname is:", __dirname);
-app.use(express.static(__dirname+"/client"))
+app.use(express.static(path.join(__dirname, '..', 'client')));
 
 // this is our body-parser
 app.use(express.json())
@@ -13,6 +16,8 @@ app.use(express.urlencoded({extended: false}))
 
 // allows access to fake data file
 const { bucketArray } = require("./mockData");
+
+// HOW to send a HTML file if the static folder has not been setup:
 
 // app.get("/", (req, res) => {
 //   // res.send("Groot route");
@@ -40,12 +45,15 @@ app.post("/bucket", (req, res) => {
 // Delete
 app.delete('/bucket/:id', (req, res)=>{
   // access value from parameters
-  let requestedId = Number(req.params.id)
+  let requestedId = req.params.id;
+  
   // need to find if element exists matching user's id
   // if there is a match, returns the index of the first match
   let requestedItemIndex = bucketArray.findIndex((bucketItem)=>{
     return bucketItem.id === requestedId
   })
+
+  // if the item is found, then remove it
   if(requestedItemIndex !== -1){
     // if we know the index, can we splice?
     // we need to know starting index and 1

@@ -2,6 +2,7 @@
 const baseUrl = "http://localhost:3000";
 
 // READ
+// run once the html has loaded (document is ready)
 $(document).ready(function () {
   let route = "bucket";
   let endpoint = `${baseUrl}/${route}`;
@@ -48,11 +49,14 @@ $("ul").on("click", "li", function (e) {
 
 // DELETE
 $("ul").on("click", "span", function (event) {
+  // stop the click propagating to the li under the span
   event.stopPropagation();
+
+  // find the item's unique identifier from it's data-id attribute
   let itemId = $(this).parent().data("bucketid");
 
-  let route = `bucket/${itemId}`;
-  let endpoint = `${baseUrl}/${route}`;
+  // define the backend endpoint
+  let endpoint = `${baseUrl}/bucket/${itemId}`;
 
   fetch(endpoint, {
     method: "DELETE",
@@ -71,8 +75,10 @@ $("ul").on("click", "span", function (event) {
     });
 });
 
-// CREATE
+// CREATE - POST
 $("input").keypress(function (event) {
+  // if the user clicks "return" or "enter" key
+  // and the input has a value
   if (event.which === 13 && $(this).val()) {
     let route = "bucket";
     let endpoint = `${baseUrl}/${route}`;
@@ -87,16 +93,15 @@ $("input").keypress(function (event) {
       // and tell how we are trenferring data from client to server
       headers: {
         "Content-Type": "application/json",
-      },
-      // NOTE: since listItem is a JS object, we need to stringify and
-      // send as JSON as promised by the headers
-      body: JSON.stringify(listItem),
+      }
     })
       .then(function (response) {
+        // success case
         if (response.ok) {
           return response.json();
         }
-        throw Error("Justin messed up the create on front end!!");
+        // failure case
+        throw Error("We messed up the create on front end!!");
       })
       .then(function (data) {
         // data is an object
