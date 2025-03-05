@@ -48,7 +48,7 @@ apiRouter.post("/bucket", (req, res) => {
 });
 
 // Delete
-apiRouter.delete('/api/bucket/:id', (req, res) => {
+apiRouter.delete('/bucket/:id', (req, res) => {
   // access value from parameters
   let requestedId = req.params.id;
 
@@ -71,7 +71,7 @@ apiRouter.delete('/api/bucket/:id', (req, res) => {
 })
 
 // UPDATE = PUT
-apiRouter.put('/api/bucket/:id', (req, res) => {
+apiRouter.put('/bucket/:id', (req, res) => {
   let requestedId = Number(req.params.id)
   // iterate through array
   // if found, return the element => object

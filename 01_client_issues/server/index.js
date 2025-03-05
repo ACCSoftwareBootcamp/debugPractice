@@ -1,122 +1,128 @@
-require('dotenv').config();
-const express = require("express");
-const app = express();
-// needed for third party deployment
-const port = process.env.PORT || 3000;
+// import all the modules needed
+const express = require('express');
+const logger = require('morgan');
+// Allow requests from different domains or aka origins - 
+// cross origin resource sharing
 const cors = require('cors');
 
-// open the server to cors
+// Create an instance (object) based on express
+const app = express();
+// define a variable PORT that keeps the port we run the api on
+const PORT = process.env.PORT || 3000;
+
+// MIDDLEWARE - anything that runs after a request but before sending a response
+//  e.g. authenticate and authorize
+//  e.g. log the requests
+//  e.g. transform the data
+app.use(express.static('../client'))
+// opens up the server to accept incoming requests from non-same origins
+// opening up
 app.use(cors());
-
-app.use(express.static(__dirname + '/client'))  // webroot 
-
-// access body-parser functionality
-// NOTE: This is the Body-Parser
-app.use(express.json());
+// logs incoming requests to the console
+app.use(logger('dev'));
+// parses incoming requests with urlencoded body payloads, using qs library
 app.use(express.urlencoded({ extended: false }));
+// parses incoming requests with JSON body payloads
+app.use(express.json());
 
-const mongoose = require('mongoose')
+// mock data 
+const bucketListArray = require('./data/bucketlist')
 
-// get the various connection settings from 
-// the environment variables from the .env file
-
-const {DB, URI, DB_PASS, DB_USER} = process.env;
-
-let url = `${URI}/${DB}`
-
-let connectionObject = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  authSource: "admin",
-  user: DB_USER,
-  pass: DB_PASS
-};
-
-/* 
-   The mongoose.set('strictQuery', false); line is used to globally disable the 
-   "strict query" option in Mongoose. The "strict query" option, when enabled, 
-   ensures that only the fields defined in the schema are considered in a query. 
-   Any fields in the query that are not defined in the schema are ignored.
-
-   By setting strictQuery to false, Mongoose will not ignore fields in the query 
-   that are not defined in the schema. This means that even if a field is not 
-   defined in the schema, it can still be used in a query.
-*/
-mongoose.set('strictQuery', false);
-
-mongoose
-  .connect(url, connectionObject)
-  .then(() => console.log(`Connected to ${DB} database`))
-  .catch((err) => console.log(`Error connecting to ${DB} database: `,  err));
-
-// root route
-app.get("/", (req, res) => {
-  // res.send("API root route");
-  res.sendFile('index.html', {root: __dirname + '/client'} );
-});
-
-// Blueprints (schema)
-// and Handles to the collection (model)
-const { BucketModel } = require("./models/BucketModel");
-
-// Queries
-app.post("/bucket", (req, res) => {
-  // we need to get description from client
-  let desc = req.body.description;
-  // send data to database
-  BucketModel.create({ description: desc }, (err, result) => {
-    if (err) {
-      res.status(444).send({ message: "Unable to create data for database" });
-    } else {
-      res.json(result);
-    }
-  });
-});
-
-app.get("/bucket", (req, res) => {
-  BucketModel.find({}, (err, results) => {
-    if (err)
-      res.status(445).send({ message: "Unable to read data from database" });
-    else res.json(results);
-  });
-});
-
-app.delete("/bucket/:id", (req, res) => {
-  let requestedId = req.params.id;
-  BucketModel.findByIdAndDelete(requestedId, (err, result) => {
-    if (err)
-      res.status(446).send({ message: "Unable to delete data from database" });
-    else res.json(result);
-  });
-});
-
-app.put('/bucket/:id', (req, res)=>{
-  let requestedId = req.params.id
-  //3 step process
-      //1) findById() takes 2 arguments (filter) - find the document that matches our ID with - .findById()    ,- this is a mongoose method
-  BucketModel.findById(requestedId, (err, result)=>{
-      if(err){
-          console.log(`Error retrieving document through update: ${err}`)
-          res.status(666).send({message: "Error retrieving document through update"});
-      } else {
-      //2) RESULT need to update the isComplete in the returned document
-      //THIS IS TOGGLING
-      // if(result.isComplete === true){
-      //     result.isComplete = false
-      // } else {
-      //     result.isComplete = true
-      // }
-      result.isComplete = !result.isComplete; //This line is a shortened version of lines 73-77
-      //3) save the updated document - error not to be confused with err
-      result.save((error, updatedResult)=>{
-          if(error) res.status(668).send({ message: "Error saving document through update"});
-          else res.json(updatedResult)
-      })
-      }
-  })
+// ROUTE HANDLERS
+app.get('/', (req, res) => {
+  res.send("I am the root route.")
 })
 
-app.listen(
-  port, 
-  () => console.log(`API app listening on port ${port}`)
-);
+// Create - POST
+app.post('/api/bucket', (req, res) => {
+  //call of to the db - N/A
+  //wait for the db to respond - N/A
+  let { description } = req.body
+  // create an object for the databo received
+  let obj = {
+    id: Date.now(),
+    description: description.substr(0, 30),
+    isComplete: false
+  }
+  // save it to the array
+  bucketListArray.push(obj)
+  // send that data back
+  res.send(obj)
+})
+
+// Read - GET
+app.get('/api/bucket', (req, res) => {
+  res.send(bucketListArray)
+})
+
+// Update - PUT - 
+app.put('/api/bucket/:id', (req, res) => {
+  let requestedId = req.params.id;
+  // find a reference (pointer) to the object
+  // in the bucketListArray that has the id: 1
+  let foundObj = bucketListArray.find(function(element){
+    return element.id == requestedId
+  })
+  // check if an object was actually found
+  if(foundObj) {
+    // update/toggle the foundObj.isComplete in the array
+    foundObj.isComplete = !foundObj.isComplete;
+    // return the changed value back to the client
+    res.json(foundObj)
+  } else {
+    // id is not found
+    res.json({status: 404, message: `The id ${requestedId} does not exist`})
+  }
+})
+
+// Delete - DELETE
+app.delete('/api/bucket/:id', (req, res) => {
+  // find the requested id
+  const {id} = req.params;
+
+  // find it in the array
+  const requestedItemIndex = bucketListArray.findIndex(
+    function(element){ 
+      return element.id == id
+    }
+  )
+
+  // not found?
+  if(requestedItemIndex === -1) {
+    res.status(404).json({status:404, message: 'requested id not found in db'})
+    return false;
+  }
+
+  // needs to be deleted object
+  const deletedItem = bucketListArray.splice(requestedItemIndex, 1)
+
+  // send it back
+  res.json({ok: true, deletedItem})
+})
+
+// Listening for incoming requests
+app.listen(PORT, () => console.log(`App listening on PORT: ${PORT}`))
+
+
+// extended: false: When extended is set to false, the querystring library 
+// is used to parse the URL-encoded data. This means that the data will be 
+// parsed into a simple object, and nested objects or arrays are not 
+// supported. This is suitable for simple form submissions where the data 
+// structure is flat.
+
+// extended: true: When extended is set to true, the qs library is used to 
+// parse the URL-encoded data. This allows for more complex data structures, 
+// including nested objects and arrays. This is useful when you need to 
+// handle more complex form submissions or data structures.
+
+
+// // unordered
+// var obj = {
+//   3: "Namrata",
+//   1: "Piyush",
+//   2: "Pase",
+// }
+
+
+// // ordered
+// var arr = ['Namrata', 'Piyush', 'Pase']
