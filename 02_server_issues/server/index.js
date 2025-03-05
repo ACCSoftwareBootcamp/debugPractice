@@ -43,6 +43,8 @@ apiRouter.post("/bucket", (req, res) => {
     description: req.body.description ? req.body.description : "Miguel messed up!!!",
     isComplete: false,
   };
+  // save it to the bucketArray
+  bucketArray.push(data);
   // send a receipt back to client
   res.json(data);
 });
@@ -77,7 +79,7 @@ apiRouter.put('/bucket/:id', (req, res) => {
   // if found, return the element => object
   // if not found, return undefined
   let item = bucketArray.find(bucketItem => {
-    return requestedId = bucketItem.id
+    return requestedId == bucketItem.id
   })
   // test to make sure element is found
   if (item) {

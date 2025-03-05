@@ -14,7 +14,8 @@ const PORT = process.env.PORT || 3000;
 //  e.g. authenticate and authorize
 //  e.g. log the requests
 //  e.g. transform the data
-app.use(express.static('../client'))
+app.use(express.static(path.join(__dirname, '..', 'client')));
+
 // opens up the server to accept incoming requests from non-same origins
 // opening up
 app.use(cors());
@@ -34,7 +35,7 @@ app.get('/', (req, res) => {
 })
 
 // Create - POST
-app.post('/api/bucket', (req, res) => {
+app.post('/bucket', (req, res) => {
   //call of to the db - N/A
   //wait for the db to respond - N/A
   let { description } = req.body
@@ -51,12 +52,12 @@ app.post('/api/bucket', (req, res) => {
 })
 
 // Read - GET
-app.get('/api/bucket', (req, res) => {
+app.get('/bucket', (req, res) => {
   res.send(bucketListArray)
 })
 
 // Update - PUT - 
-app.put('/api/bucket/:id', (req, res) => {
+app.put('/bucket/:id', (req, res) => {
   let requestedId = req.params.id;
   // find a reference (pointer) to the object
   // in the bucketListArray that has the id: 1
@@ -76,7 +77,7 @@ app.put('/api/bucket/:id', (req, res) => {
 })
 
 // Delete - DELETE
-app.delete('/api/bucket/:id', (req, res) => {
+app.delete('/bucket/:id', (req, res) => {
   // find the requested id
   const {id} = req.params;
 
@@ -103,26 +104,3 @@ app.delete('/api/bucket/:id', (req, res) => {
 // Listening for incoming requests
 app.listen(PORT, () => console.log(`App listening on PORT: ${PORT}`))
 
-
-// extended: false: When extended is set to false, the querystring library 
-// is used to parse the URL-encoded data. This means that the data will be 
-// parsed into a simple object, and nested objects or arrays are not 
-// supported. This is suitable for simple form submissions where the data 
-// structure is flat.
-
-// extended: true: When extended is set to true, the qs library is used to 
-// parse the URL-encoded data. This allows for more complex data structures, 
-// including nested objects and arrays. This is useful when you need to 
-// handle more complex form submissions or data structures.
-
-
-// // unordered
-// var obj = {
-//   3: "Namrata",
-//   1: "Piyush",
-//   2: "Pase",
-// }
-
-
-// // ordered
-// var arr = ['Namrata', 'Piyush', 'Pase']
