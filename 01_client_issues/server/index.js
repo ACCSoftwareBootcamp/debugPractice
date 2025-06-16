@@ -67,7 +67,7 @@ app.put('/bucket/:id', (req, res) => {
   // check if an object was actually found
   if(foundObj) {
     // update/toggle the foundObj.isComplete in the array
-    foundObj.isComplete = !foundObj.isComplete;
+    foundObj.isComplete = foundObj.isComplete;
     // return the changed value back to the client
     res.json(foundObj)
   } else {

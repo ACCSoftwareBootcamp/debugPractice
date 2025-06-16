@@ -33,14 +33,13 @@ $("ul").on("click", "li", function (e) {
   let itemId = $(this).data("bucketid");
   let route = `bucket/${itemId}`
   let endpoint = `${baseUrl}/${route}`
-  let self = this
   fetch(endpoint, {method: "PUT"})
   .then(function(response){
     if(response.ok) return response.json()
     throw Error("Unable to update data from front end")
   })
   .then(function(data){
-    $(self).toggleClass("completed");
+    $(this).toggleClass("completed");
   })
   .catch(function(error){
     console.error(`Error updating data from front end: ${error}`)
